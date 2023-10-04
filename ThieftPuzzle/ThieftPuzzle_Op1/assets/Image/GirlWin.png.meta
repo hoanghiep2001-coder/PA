@@ -1,0 +1,38 @@
+{
+  "ver": "2.3.7",
+  "uuid": "dbc40322-082f-43d4-b916-db8c055c5b6c",
+  "importer": "texture",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 171,
+  "height": 342,
+  "platformSettings": {},
+  "subMetas": {
+    "GirlWin": {
+      "ver": "1.0.6",
+      "uuid": "d7970ced-4eef-42c1-9d3d-3efc64981926",
+      "importer": "sprite-frame",
+      "rawTextureUuid": "dbc40322-082f-43d4-b916-db8c055c5b6c",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 171,
+      "height": 342,
+      "rawWidth": 171,
+      "rawHeight": 342,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
