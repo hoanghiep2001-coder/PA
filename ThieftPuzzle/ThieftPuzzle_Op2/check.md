@@ -1,0 +1,1 @@
+sử dụng graphics để nối 2 điểm A và C lại với nhau, từ đó tạo ra đường kẻ
