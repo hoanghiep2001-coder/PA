@@ -23,6 +23,8 @@ export default class GamePlay extends cc.Component {
   @property(cc.Node)
   Point_C: cc.Node = null;
   @property(cc.Node)
+  bag: cc.Node = null;
+  @property(cc.Node)
   hand_HiddenPoint: cc.Node = null;
   @property(cc.Node)
   Point_A: cc.Node = null;
@@ -62,9 +64,11 @@ export default class GamePlay extends cc.Component {
   isCollideBreakPoint: boolean = false;
   isTurnBack: boolean = false;
   isStep2: boolean = false;
+  erasing: boolean = false;
 
   GraphicsBoudingBox: cc.Rect = null;
 
+  eraseProgress: number = 0;
   FlagLeft: number = null;
   FlagHorizontal: number = null;
 
@@ -151,7 +155,7 @@ export default class GamePlay extends cc.Component {
 
     // check collide point to break
     else if (this.Point_C.getBoundingBox().intersects(this.FenceFoot.getBoundingBox())) {
-      if(this.isTurnBack) {
+      if (this.isTurnBack) {
         this.isTurnBack = false;
         this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
         this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
@@ -180,13 +184,16 @@ export default class GamePlay extends cc.Component {
 
   private handleSetPosPointC_2(touchPos: cc.Vec2): void {
     // check collide bot
-    if (this.Point_C.getBoundingBox().intersects(this.Fence_Bottom.getBoundingBox())
-    ) {
+    if (this.Point_C.getBoundingBox().intersects(this.Fence_Bottom.getBoundingBox())) {
       this.hanldeCheckCollideBot(touchPos);
-    } else if(this.Point_C.x < this.BreakPoint.x) {
+    }
+
+    else if (this.Point_C.x < this.BreakPoint.x) {
       this.isCollideBreakPoint = false;
       this.isTurnBack = true;
-    } else {
+    }
+
+    else {
       this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
       this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
     }
@@ -244,9 +251,9 @@ export default class GamePlay extends cc.Component {
     this.currentPoint_C_Pos = new cc.Vec2(xC, yC);
 
     let directionVector: cc.Vec2;
-    this.isCollideBreakPoint 
-    ? directionVector = this.currentPoint_C_Pos.sub(this.BreakPoint) 
-    : directionVector = this.currentPoint_C_Pos.sub(this.initPoint_A_Pos);
+    this.isCollideBreakPoint
+      ? directionVector = this.currentPoint_C_Pos.sub(this.BreakPoint)
+      : directionVector = this.currentPoint_C_Pos.sub(this.initPoint_A_Pos);
 
     const rotationRadians = Math.atan2(directionVector.y, directionVector.x);
     const rotationDegrees = cc.misc.radiansToDegrees(rotationRadians);
@@ -256,7 +263,12 @@ export default class GamePlay extends cc.Component {
 
 
   private onHideMaskTouchEnd(): void {
-
+    if (this.Point_C.getBoundingBox().intersects(this.bag.getBoundingBox())) {
+      this.erasing = true;
+      this.eraseProgress = 1; // Reset tiến trình tẩy
+      // this.eraseLine();
+      this.eraseLine();
+    }
   }
 
 
@@ -266,7 +278,7 @@ export default class GamePlay extends cc.Component {
 
 
   private handleDrawLine(graphics: cc.Graphics, startPos: cc.Vec2, endPos: cc.Vec2) {
-    if(!this.isCollideBreakPoint) {
+    if (!this.isCollideBreakPoint) {
       this.Graphics.clear();
       this.Graphics_2.clear();
     } else {
@@ -282,18 +294,51 @@ export default class GamePlay extends cc.Component {
 
 
   private drawLine1(): void {
-    // if(this.isStep2) {
-    //   return;
-    // }
-
-    // this.isStep2 = true;
     this.Graphics.clear();
 
     this.Graphics.lineWidth = 5;
     this.Graphics.moveTo(this.initPoint_A_Pos.x, this.initPoint_A_Pos.y);
     this.Graphics.lineTo(this.BreakPoint.x, this.BreakPoint.y);
     this.Graphics.stroke();
-    
+
+  }
+
+
+  eraseLine() {
+    const erasingSpeed = 100; // Tốc độ tẩy (pixels/s)
+    const totalDistance = this.initPoint_A_Pos.sub(this.BreakPoint).mag(); // Tính tổng khoảng cách từ C đến A
+
+    const eraseStep = () => {
+      // Tính khoảng cách cần tẩy trong khoảng thời gian delta
+      const delta = erasingSpeed / totalDistance;
+      this.eraseProgress -= delta;
+
+      // Giới hạn giá trị eraseProgress trong khoảng [0, 1]
+      this.eraseProgress = cc.misc.clamp01(this.eraseProgress);
+
+      // Xóa đường vẽ hiện tại
+      this.Graphics.clear();
+
+      // Nếu eraseProgress > 0, vẽ lại đường từ A đến C
+      if (this.eraseProgress > 0) {
+        const newX = this.BreakPoint.x + (this.initPoint_A_Pos.x - this.BreakPoint.x) * this.eraseProgress;
+        const newY = this.BreakPoint.y + (this.initPoint_A_Pos.y - this.BreakPoint.y) * this.eraseProgress;
+        this.Graphics.moveTo(this.initPoint_A_Pos.x, this.initPoint_A_Pos.y);
+        this.Graphics.lineTo(newX, newY);
+        this.Graphics.stroke();
+      }
+
+      // Tiếp tục tẩy nét nếu eraseProgress > 0
+      if (this.eraseProgress > 0) {
+        requestAnimationFrame(eraseStep); // Gọi lại hàm sau một khung hình
+      } else {
+        // Kết thúc quá trình tẩy nét
+        this.erasing = false;
+      }
+    };
+
+    // Bắt đầu quá trình tẩy nét
+    eraseStep();
   }
 
 

@@ -336,6 +336,9 @@
     "Point_C": {
       "__id__": 54
     },
+    "bag": {
+      "__id__": 27
+    },
     "hand_HiddenPoint": {
       "__id__": 55
     },
