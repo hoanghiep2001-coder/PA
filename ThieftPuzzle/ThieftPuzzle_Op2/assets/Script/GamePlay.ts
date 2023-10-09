@@ -343,7 +343,7 @@ export default class GamePlay extends cc.Component {
 
 
   protected update(dt: number): void {
-
+    
   }
 
 }
