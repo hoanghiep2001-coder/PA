@@ -1,21 +1,27 @@
 {
   "last-module-event-record-time": 1696303590767,
   "group-list": [
-    "point",
-    "handImpactPoint"
+    "Hand",
+    "Point",
+    "Fence"
   ],
   "collision-matrix": [
     [
       false,
+      true,
       true
     ],
     [
       true,
       false
+    ],
+    [
+      true,
+      false,
+      false
     ]
   ],
   "excluded-modules": [
-    "Collider",
     "Dynamic Atlas",
     "DragonBones",
     "EditBox",
@@ -23,7 +29,6 @@
     "Label Effect",
     "Mesh",
     "Native Socket",
-    "Physics",
     "PageView",
     "PageViewIndicator",
     "ProgressBar",

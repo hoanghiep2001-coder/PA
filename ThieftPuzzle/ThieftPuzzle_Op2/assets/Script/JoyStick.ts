@@ -6,7 +6,7 @@ export class JoyStick extends cc.Component {
   @property(cc.Node)
   stick: cc.Node = null;
   @property(cc.Node)
-  hideMask: cc.Node = null;
+  Point_C: cc.Node = null;
 
 
   @property
@@ -18,10 +18,10 @@ export class JoyStick extends cc.Component {
   start() {}
   onLoad() {
     this.stick.setPosition(0, 0, 0);
-    this.hideMask.on(cc.Node.EventType.TOUCH_START, this.stickMove, this);
-    this.hideMask.on(cc.Node.EventType.TOUCH_MOVE, this.stickMove, this);
-    this.hideMask.on(cc.Node.EventType.TOUCH_CANCEL, this.stickEnd, this);
-    this.hideMask.on(cc.Node.EventType.TOUCH_END, this.stickEnd, this);
+    this.Point_C.on(cc.Node.EventType.TOUCH_START, this.stickMove, this);
+    this.Point_C.on(cc.Node.EventType.TOUCH_MOVE, this.stickMove, this);
+    this.Point_C.on(cc.Node.EventType.TOUCH_CANCEL, this.stickEnd, this);
+    this.Point_C.on(cc.Node.EventType.TOUCH_END, this.stickEnd, this);
   }
 
   private stickMove(event: cc.Touch) {
