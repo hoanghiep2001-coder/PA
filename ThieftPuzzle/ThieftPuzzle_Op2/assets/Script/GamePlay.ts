@@ -61,6 +61,7 @@ export default class GamePlay extends cc.Component {
   isPlayBgSound: boolean = false;
   isCollideBreakPoint: boolean = false;
   isTurnBack: boolean = false;
+  isStep2: boolean = false;
 
   GraphicsBoudingBox: cc.Rect = null;
 
@@ -157,10 +158,9 @@ export default class GamePlay extends cc.Component {
         return;
       }
 
-      this.Graphics.clear();
-      this.handleDrawLine(this.Graphics, this.initPoint_A_Pos, this.BreakPoint);
+      // this.Graphics.clear();
+      // this.handleDrawLine(this.Graphics, this.initPoint_A_Pos, this.BreakPoint);
       this.isCollideBreakPoint = true;
-      
     }
 
     // check if hand longer the break point
@@ -270,6 +270,7 @@ export default class GamePlay extends cc.Component {
       this.Graphics.clear();
       this.Graphics_2.clear();
     } else {
+      this.drawLine1();
       this.Graphics_2.clear();
     }
 
@@ -277,7 +278,22 @@ export default class GamePlay extends cc.Component {
     graphics.moveTo(startPos.x, startPos.y);
     graphics.lineTo(endPos.x, endPos.y);
     graphics.stroke();
+  }
 
+
+  private drawLine1(): void {
+    // if(this.isStep2) {
+    //   return;
+    // }
+
+    // this.isStep2 = true;
+    this.Graphics.clear();
+
+    this.Graphics.lineWidth = 5;
+    this.Graphics.moveTo(this.initPoint_A_Pos.x, this.initPoint_A_Pos.y);
+    this.Graphics.lineTo(this.BreakPoint.x, this.BreakPoint.y);
+    this.Graphics.stroke();
+    
   }
 
 
