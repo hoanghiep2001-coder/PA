@@ -120,7 +120,6 @@ export default class GamePlay extends cc.Component {
     this.Girl_Win.active = false;
     this.thief_Lose.active = false;
     this.thief_Win.active = false;
-    
   }
 
 
