@@ -1,5 +1,5 @@
 {
-  "last-module-event-record-time": 1696303590767,
+  "last-module-event-record-time": 1696925172833,
   "group-list": [
     "Hand",
     "Point",
@@ -29,6 +29,7 @@
     "Label Effect",
     "Mesh",
     "Native Socket",
+    "Physics",
     "PageView",
     "PageViewIndicator",
     "ProgressBar",

@@ -27,6 +27,8 @@ export default class GamePlay extends cc.Component {
   @property(cc.Node)
   hand_HiddenPoint: cc.Node = null;
   @property(cc.Node)
+  train: cc.Node = null;
+  @property(cc.Node)
   Point_A: cc.Node = null;
   @property(cc.Node)
   Point_B: cc.Node = null;
@@ -36,11 +38,23 @@ export default class GamePlay extends cc.Component {
   Graphics_2: cc.Graphics = null;
 
   @property(cc.Node)
+  checkPoint_1: cc.Node = null;
+  @property(cc.Node)
+  checkPoint_2: cc.Node = null;
+
+  @property(cc.Node)
   Point_Girl: cc.Node = null;
   @property(cc.Node)
   Girl_Default: cc.Node = null;
   @property(cc.Node)
   Girl_Win: cc.Node = null;
+  
+  @property(cc.Node)
+  thief_Default: cc.Node = null;
+  @property(cc.Node)
+  thief_Lose: cc.Node = null;
+  @property(cc.Node)
+  thief_Win: cc.Node = null;
 
   @property(cc.Node)
   Fence_Top: cc.Node = null;
@@ -82,11 +96,16 @@ export default class GamePlay extends cc.Component {
   isCollidePointOnly: boolean = false;
   isTurnBack1: boolean = false;
   isTurnBack2: boolean = false;
+  isFail: boolean = false;
+  isTouchBag: boolean = false;
+  isCheckPoint1: boolean = false;
+  isCheckPoint2: boolean = false;
 
   GraphicsBoudingBox: cc.Rect = null;
 
   FlagLeft: number = null;
   FlagHorizontal: number = null;
+  drawSoundState: number = null;
 
 
   protected onLoad(): void {
@@ -99,6 +118,9 @@ export default class GamePlay extends cc.Component {
     this.Hand_CTA.active = false;
 
     this.Girl_Win.active = false;
+    this.thief_Lose.active = false;
+    this.thief_Win.active = false;
+    
   }
 
 
@@ -117,6 +139,8 @@ export default class GamePlay extends cc.Component {
 
 
   private HandleGamePlay(): void {
+    cc.audioEngine.play(this.AudioManager.bgSound, true, 1);
+    this.train.getComponent(cc.Animation).play("Train_Anim");
     this.Hint_OpenGame.getComponent(cc.Animation).play("Hint_OpenSceneAnim");
   }
 
@@ -136,7 +160,7 @@ export default class GamePlay extends cc.Component {
     this.currentPos = e.getLocation();
     this.Point_B.active = false;
     this.Hint_OpenGame.active = false;
-    this.Text_Drag.active = false;
+    this.drawSoundState = cc.audioEngine.play(this.AudioManager.drawSound, true, 1);
   }
 
 
@@ -179,9 +203,28 @@ export default class GamePlay extends cc.Component {
 
     // check collide girl
     else if (this.Point_C.getBoundingBox().intersects(this.Point_Girl.getBoundingBox())) {
-
       this.hanldeCheckCollideGirl(touchPos);
       return;
+    }
+
+    // check collide train
+    else if (this.Point_C.getBoundingBox().intersects(this.train.getBoundingBox())) {
+      this.hanldeCheckCollideGirl(touchPos);
+      return;
+    }
+
+    else if (this.Point_C.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox())) {
+      this.isCheckPoint1 = true;
+      this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+      this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
+    }
+
+
+    else if (this.Point_C.y > this.checkPoint_1.y)
+     {
+      this.isCheckPoint1 = false;
+      this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+      this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
     }
 
     // check if hand longer the break point
@@ -209,10 +252,22 @@ export default class GamePlay extends cc.Component {
 
     // check collide girl
     else if (this.Point_C.getBoundingBox().intersects(this.Point_Girl.getBoundingBox())) {
-
       this.hanldeCheckCollideGirl(touchPos);
       return;
     }
+
+
+    else if (this.Point_C.getBoundingBox().intersects(this.bag.getBoundingBox())) {
+      this.Graphics.fillColor = cc.color(41, 167, 208, 255);
+      this.Graphics.strokeColor = cc.color(41, 167, 208, 255);
+      this.Graphics_2.fillColor = cc.color(41, 167, 208, 255);
+      this.Graphics_2.strokeColor = cc.color(41, 167, 208, 255);
+
+      this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+      this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
+      return;
+    }
+
 
     else if (this.Point_C.x < this.BreakPoint.x) {
       this.isCollideBreakPoint = false;
@@ -222,6 +277,11 @@ export default class GamePlay extends cc.Component {
     }
 
     else {
+      this.Graphics.fillColor = cc.Color.BLACK;
+      this.Graphics.strokeColor = cc.Color.BLACK;
+      this.Graphics_2.fillColor = cc.Color.BLACK;
+      this.Graphics_2.strokeColor = cc.Color.BLACK;
+
       this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
       this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
     }
@@ -292,30 +352,57 @@ export default class GamePlay extends cc.Component {
 
 
   private onHideMaskTouchEnd(): void {
-    if (this.Point_C.getBoundingBox().intersects(this.bag.getBoundingBox())) {
-      this.win();
+    cc.audioEngine.stop(this.drawSoundState);
+
+    if(!this.isFail) {
+      if (this.Point_C.getBoundingBox().intersects(this.bag.getBoundingBox())) {
+        this.win();
+      }
     }
   }
 
 
   private lose(): void {
+    if(this.isFail) {
+      return;
+    }
+
+    this.Text_Drag.active = false;
+    this.train.getComponent(cc.Animation).stop("Train_Anim");
+
+    cc.audioEngine.stop(this.drawSoundState)
+    cc.audioEngine.play(this.AudioManager.loseSound, false, 1);
+
     this.Point_C.off(cc.Node.EventType.TOUCH_MOVE);
     this.Point_C.off(cc.Node.EventType.TOUCH_START);
+    this.Point_C.off(cc.Node.EventType.TOUCH_END);
+
+    this.isFail = true;
 
     this.Graphics.fillColor = cc.Color.RED;
     this.Graphics.strokeColor = cc.Color.RED;
     this.Graphics_2.fillColor = cc.Color.RED;
     this.Graphics_2.strokeColor = cc.Color.RED;
 
-    this.handleShowInstallBtn(false);
+    this.scheduleOnce(() => {
+      this.thief_Default.active = false;
+      this.thief_Lose.active = true;
+      this.Point_C.active = false;
+      this.handleShowInstallBtn(false);
+      this.Graphics.clear();
+      this.Graphics_2.clear();
+    }, 0.5);
   }
 
 
   private win(): void {
+    cc.audioEngine.stop(this.drawSoundState);
+    this.train.getComponent(cc.Animation).stop("Train_Anim");
     this.Point_C.off(cc.Node.EventType.TOUCH_MOVE);
     this.Point_C.off(cc.Node.EventType.TOUCH_START);
-
+    
     let newPos = new cc.Vec3(this.BreakPoint.x, this.BreakPoint.y, 0);
+    this.Text_Drag.active = false;
     this.isTurnBack1 = true;
 
     cc.tween(this.Point_C)
@@ -337,7 +424,16 @@ export default class GamePlay extends cc.Component {
       .to(0.3, { position: newPos })
       .call(() => {
         this.Graphics.node.active = false;
-        this.handleShowInstallBtn(true);
+        
+        this.scheduleOnce(() => {
+          this.thief_Default.active = false;
+          this.thief_Win.active = true;
+          this.handleShowInstallBtn(true);
+          this.Point_C.active = false;
+          this.bag.active = false;
+
+          cc.audioEngine.play(this.AudioManager.winSound, false, 1);
+        }, 0.5);
       })
       .start();
   }
@@ -361,6 +457,7 @@ export default class GamePlay extends cc.Component {
       this.drawLine1();
       this.Graphics_2.clear();
     }
+
 
     graphics.lineWidth = 5;
     graphics.moveTo(startPos.x, startPos.y);
@@ -396,6 +493,18 @@ export default class GamePlay extends cc.Component {
       this.bag.x = this.Point_C.x;
       this.bag.y = this.Point_C.y;
       this.handleDrawLine(this.Graphics, this.initPoint_A_Pos, this.currentPoint_C_Pos)
+    }
+
+    if (this.train.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox())
+      && this.isCheckPoint1
+    ) {
+      if(this.isFail) {
+        return;
+      }
+
+      console.log("3");
+      this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
+      return;
     }
   }
 

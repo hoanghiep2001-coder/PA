@@ -1,0 +1,70 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "Train_Anim",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 10.016666666666667,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "props": {
+      "position": [
+        {
+          "frame": 0,
+          "value": [
+            145,
+            -28,
+            0
+          ]
+        },
+        {
+          "frame": 5.016666666666667,
+          "value": [
+            -333,
+            -28,
+            0
+          ]
+        },
+        {
+          "frame": 10.016666666666667,
+          "value": [
+            145,
+            -28,
+            0
+          ]
+        }
+      ],
+      "scale": [
+        {
+          "frame": 0,
+          "value": {
+            "__type__": "cc.Vec3",
+            "x": 0.45,
+            "y": 0.45,
+            "z": 1
+          }
+        },
+        {
+          "frame": 5.016666666666667,
+          "value": {
+            "__type__": "cc.Vec3",
+            "x": 0.45,
+            "y": 0.45,
+            "z": 1
+          }
+        },
+        {
+          "frame": 5.033333333333333,
+          "value": {
+            "__type__": "cc.Vec3",
+            "x": -0.45,
+            "y": 0.45,
+            "z": 1
+          }
+        }
+      ]
+    }
+  },
+  "events": []
+}
