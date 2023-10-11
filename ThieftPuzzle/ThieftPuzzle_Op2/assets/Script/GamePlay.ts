@@ -14,9 +14,11 @@ export default class GamePlay extends cc.Component {
 
   // Node
   @property(cc.Node)
-  Bg_Vertical: cc.Node = null;
+  Bg: cc.Node = null;
   @property(cc.Node)
-  Bg_Horizontal: cc.Node = null;
+  Bg_verticalTop: cc.Node = null;
+  @property(cc.Node)
+  Bg_verticalBot: cc.Node = null;
 
   @property(cc.Node)
   HideMask: cc.Node = null;
@@ -41,6 +43,8 @@ export default class GamePlay extends cc.Component {
   checkPoint_1: cc.Node = null;
   @property(cc.Node)
   checkPoint_2: cc.Node = null;
+  @property(cc.Node)
+  checkPoint_3: cc.Node = null;
 
   @property(cc.Node)
   Point_Girl: cc.Node = null;
@@ -48,7 +52,11 @@ export default class GamePlay extends cc.Component {
   Girl_Default: cc.Node = null;
   @property(cc.Node)
   Girl_Win: cc.Node = null;
-  
+  @property(cc.Node)
+  Girl_Lose: cc.Node = null;
+
+  @property(cc.Node)
+  thief_Container: cc.Node = null;
   @property(cc.Node)
   thief_Default: cc.Node = null;
   @property(cc.Node)
@@ -56,6 +64,12 @@ export default class GamePlay extends cc.Component {
   @property(cc.Node)
   thief_Win: cc.Node = null;
 
+  @property(cc.Node)
+  TrainPoint: cc.Node = null;
+  @property(cc.Node)
+  Fence: cc.Node = null;
+  @property(cc.Node)
+  Fence2: cc.Node = null;
   @property(cc.Node)
   Fence_Top: cc.Node = null;
   @property(cc.Node)
@@ -77,8 +91,12 @@ export default class GamePlay extends cc.Component {
   Text_TestIQ: cc.Node = null;
   @property(cc.Node)
   Hand_CTA: cc.Node = null;
+
+  @property(cc.Node)
+  Hint_Horizontal: cc.Node = null;
   @property(cc.Node)
   Hint_OpenGame: cc.Node = null;
+
 
   // array
 
@@ -89,10 +107,14 @@ export default class GamePlay extends cc.Component {
   currentPos: cc.Vec2 = null;
   BreakPoint: cc.Vec2 = null;
 
+  tweenState1: cc.Tween = null;
+  tweenState2: cc.Tween = null;
+
+  isRotate: boolean = false;
+  isEndGame: boolean = false;
   isPlayBgSound: boolean = false;
   isCollideBreakPoint: boolean = false;
   isTurnBack: boolean = false;
-  erasing: boolean = false;
   isCollidePointOnly: boolean = false;
   isTurnBack1: boolean = false;
   isTurnBack2: boolean = false;
@@ -100,8 +122,7 @@ export default class GamePlay extends cc.Component {
   isTouchBag: boolean = false;
   isCheckPoint1: boolean = false;
   isCheckPoint2: boolean = false;
-
-  GraphicsBoudingBox: cc.Rect = null;
+  isCratched: boolean = false;
 
   FlagLeft: number = null;
   FlagHorizontal: number = null;
@@ -118,17 +139,13 @@ export default class GamePlay extends cc.Component {
     this.Hand_CTA.active = false;
 
     this.Girl_Win.active = false;
+    this.Girl_Lose.active = false;
     this.thief_Lose.active = false;
     this.thief_Win.active = false;
   }
 
 
   protected start(): void {
-    const posX = this.Point_A.x;
-    const posY = this.Point_A.y;
-    this.initPoint_A_Pos = new cc.Vec2(posX, posY);
-    this.BreakPoint = new cc.Vec2(this.FenceFoot.x, this.FenceFoot.y);
-
     this.HandleGamePlay();
     this.RegisterEvent();
 
@@ -140,7 +157,6 @@ export default class GamePlay extends cc.Component {
   private HandleGamePlay(): void {
     cc.audioEngine.play(this.AudioManager.bgSound, true, 1);
     this.train.getComponent(cc.Animation).play("Train_Anim");
-    this.Hint_OpenGame.getComponent(cc.Animation).play("Hint_OpenSceneAnim");
   }
 
 
@@ -159,13 +175,13 @@ export default class GamePlay extends cc.Component {
     this.currentPos = e.getLocation();
     this.Point_B.active = false;
     this.Hint_OpenGame.active = false;
+    this.Hint_Horizontal.active = false;
     this.drawSoundState = cc.audioEngine.play(this.AudioManager.drawSound, true, 1);
   }
 
 
   private handleActiveSoundIronSource(): void {
     if (this.isPlayBgSound) return;
-
     this.isPlayBgSound = true;
     cc.audioEngine.play(this.AudioManager.bgSound, true, 1);
   }
@@ -186,6 +202,38 @@ export default class GamePlay extends cc.Component {
 
   private handleSetPosPointC(touchPos: cc.Vec2): void {
 
+    // checkpoint2 - horizontal
+    if (this.checkPoint_2.active) {
+      if (this.Point_C.getBoundingBox().intersects(this.checkPoint_2.getBoundingBox())) {
+        this.isCheckPoint2 = true;
+        this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+        this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
+      }
+      else if (this.Point_C.getBoundingBox().intersects(this.Fence2.getBoundingBox())) {
+        this.isCheckPoint2 = true;
+        this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+      }
+
+      // check collide top
+      else if (this.Point_C.getBoundingBox().intersects(this.Fence_Top.getBoundingBox())
+      ) {
+        console.log("Check");
+
+        this.handleCheckCollideTop(touchPos);
+        return;
+      }
+
+      else if (this.Point_C.y > this.checkPoint_2.y) {
+        this.isCheckPoint2 = false;
+        this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+        this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
+      } else {
+        this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
+        this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
+      }
+    }
+    // -----------------
+
     // check collide top
     if (this.Point_C.getBoundingBox().intersects(this.Fence_Top.getBoundingBox())
     ) {
@@ -195,7 +243,6 @@ export default class GamePlay extends cc.Component {
 
     // check collide left
     else if (this.Point_C.getBoundingBox().intersects(this.Fence_Left.getBoundingBox())) {
-
       this.hanldeCheckCollideLeft(touchPos);
       return;
     }
@@ -207,10 +254,11 @@ export default class GamePlay extends cc.Component {
     }
 
     // check collide train
-    else if (this.Point_C.getBoundingBox().intersects(this.train.getBoundingBox())) {
+    else if (this.Point_C.getBoundingBox().intersects(this.TrainPoint.getBoundingBox())) {
       this.hanldeCheckCollideGirl(touchPos);
       return;
     }
+
 
     else if (this.Point_C.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox())) {
       this.isCheckPoint1 = true;
@@ -219,15 +267,14 @@ export default class GamePlay extends cc.Component {
     }
 
 
-    else if (this.Point_C.y > this.checkPoint_1.y)
-     {
+    else if (this.Point_C.y > this.checkPoint_1.y) {
       this.isCheckPoint1 = false;
       this.Point_C.x = this.currentPos.x - cc.winSize.width / 2;
       this.Point_C.y = this.currentPos.y - cc.winSize.height / 2;
     }
 
     // check if hand longer the break point
-    else if (this.Point_C.y < this.BreakPoint.y && this.Point_C.x > this.BreakPoint.x) {
+    else if ( this.Point_C.y < this.BreakPoint.y && this.Point_C.x > this.BreakPoint.x) {
       this.Graphics.clear();
       this.handleDrawLine(this.Graphics, this.initPoint_A_Pos, this.BreakPoint);
       this.isCollideBreakPoint = true;
@@ -353,7 +400,7 @@ export default class GamePlay extends cc.Component {
   private onHideMaskTouchEnd(): void {
     cc.audioEngine.stop(this.drawSoundState);
 
-    if(!this.isFail) {
+    if (!this.isFail) {
       if (this.Point_C.getBoundingBox().intersects(this.bag.getBoundingBox())) {
         this.win();
       }
@@ -362,12 +409,12 @@ export default class GamePlay extends cc.Component {
 
 
   private lose(): void {
-    if(this.isFail) {
+    if (this.isFail) {
       return;
     }
 
+    this.isEndGame = true;
     this.Text_Drag.active = false;
-    this.train.getComponent(cc.Animation).stop("Train_Anim");
 
     cc.audioEngine.stop(this.drawSoundState)
     cc.audioEngine.play(this.AudioManager.loseSound, false, 1);
@@ -390,21 +437,23 @@ export default class GamePlay extends cc.Component {
       this.handleShowInstallBtn(false);
       this.Graphics.clear();
       this.Graphics_2.clear();
+      this.Girl_Win.active = true;
+      this.Girl_Default.active = false;
     }, 0.5);
   }
 
 
   private win(): void {
+    this.isEndGame = true;
     cc.audioEngine.stop(this.drawSoundState);
-    this.train.getComponent(cc.Animation).stop("Train_Anim");
     this.Point_C.off(cc.Node.EventType.TOUCH_MOVE);
     this.Point_C.off(cc.Node.EventType.TOUCH_START);
-    
+
     let newPos = new cc.Vec3(this.BreakPoint.x, this.BreakPoint.y, 0);
     this.Text_Drag.active = false;
     this.isTurnBack1 = true;
 
-    cc.tween(this.Point_C)
+    this.tweenState1 = cc.tween(this.Point_C)
       .to(0.2, { position: newPos })
       .call(() => {
         this.isTurnBack1 = false;
@@ -419,14 +468,22 @@ export default class GamePlay extends cc.Component {
     let newPos = new cc.Vec3(this.initPoint_A_Pos.x, this.initPoint_A_Pos.y, 0);
     this.Point_C.angle = -60;
     this.isTurnBack2 = true;
-    cc.tween(this.Point_C)
+    this.tweenState2 = cc.tween(this.Point_C)
       .to(0.3, { position: newPos })
       .call(() => {
+        if(this.isCratched) {
+          return;
+        }
+
         this.Graphics.node.active = false;
-        
+        this.isCheckPoint1 = false;
+        this.isCheckPoint2 = false;
+
         this.scheduleOnce(() => {
           this.thief_Default.active = false;
           this.thief_Win.active = true;
+          this.Girl_Win.active = true;
+          this.Girl_Default.active = false;
           this.handleShowInstallBtn(true);
           this.Point_C.active = false;
           this.bag.active = false;
@@ -439,12 +496,16 @@ export default class GamePlay extends cc.Component {
 
 
   private handleShowInstallBtn(result: boolean): void {
-    this.Hand_CTA.active = true;
-    this.BtnContainer.getComponent(cc.Animation).play("Button_ScaleAnim");
-    result ? this.NextBtn.active = true : this.TryAgainBtn.active = true;
+    this.HideMask.getComponent(cc.Animation).play("Overlay_anim");
 
-    // mtg & applovin
-    this.HideMask.on(cc.Node.EventType.TOUCH_START, this.GameController.installHandle, this);
+    this.scheduleOnce(() => {
+      this.Hand_CTA.active = true;
+      this.BtnContainer.getComponent(cc.Animation).play("Button_ScaleAnim");
+      result ? this.NextBtn.active = true : this.TryAgainBtn.active = true;
+
+      // mtg & applovin
+      this.HideMask.on(cc.Node.EventType.TOUCH_START, this.GameController.installHandle, this);
+    }, 0.6);
   }
 
 
@@ -457,7 +518,6 @@ export default class GamePlay extends cc.Component {
       this.Graphics_2.clear();
     }
 
-
     graphics.lineWidth = 5;
     graphics.moveTo(startPos.x, startPos.y);
     graphics.lineTo(endPos.x, endPos.y);
@@ -467,12 +527,25 @@ export default class GamePlay extends cc.Component {
 
   private drawLine1(): void {
     this.Graphics.clear();
-
     this.Graphics.lineWidth = 5;
     this.Graphics.moveTo(this.initPoint_A_Pos.x, this.initPoint_A_Pos.y);
     this.Graphics.lineTo(this.BreakPoint.x, this.BreakPoint.y);
     this.Graphics.stroke();
+  }
 
+
+  public reset(): void {
+    this.isCheckPoint1 = false;
+    this.isCheckPoint2 = false;
+    this.isCollideBreakPoint = false;
+    this.isCollidePointOnly = false;
+    this.isTurnBack = false;
+
+    this.FlagLeft = null;
+    this.FlagHorizontal = null;
+
+    this.Graphics.clear();
+    this.Graphics_2.clear();
   }
 
 
@@ -480,6 +553,20 @@ export default class GamePlay extends cc.Component {
     const xC = this.Point_C.x;
     const yC = this.Point_C.y;
     this.currentPoint_C_Pos = new cc.Vec2(xC, yC);
+
+    this.TrainPoint.position = this.train.position;
+
+    if(this.Point_C.getBoundingBox().intersects(this.checkPoint_3.getBoundingBox())) {
+      if (this.isFail) {
+        return;
+      }
+
+      this.Girl_Lose.active = true;
+      this.Girl_Default.active = false;
+      this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
+      return;
+    }
+
 
     if (this.isTurnBack1) {
       this.bag.x = this.Point_C.x;
@@ -494,14 +581,66 @@ export default class GamePlay extends cc.Component {
       this.handleDrawLine(this.Graphics, this.initPoint_A_Pos, this.currentPoint_C_Pos)
     }
 
-    if (this.train.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox())
+    if (this.TrainPoint.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox())
       && this.isCheckPoint1
     ) {
-      if(this.isFail) {
+
+      if (this.isEndGame) {
+        if(this.tweenState1) {
+          this.isCratched = true;
+          this.tweenState1.stop();
+        }
+        if(this.tweenState2) {
+          this.tweenState2.stop();
+        }
+      }
+
+      if (this.isFail) {
         return;
       }
 
-      console.log("3");
+      this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
+      return;
+    }
+
+    if (this.checkPoint_2.active) {
+      if (this.TrainPoint.getBoundingBox().intersects(this.checkPoint_2.getBoundingBox())
+        && this.isCheckPoint2
+      ) {
+        if (this.isEndGame) {
+          if(this.tweenState1) {
+            this.isCratched = true;
+            this.tweenState1.stop();
+          }
+          if(this.tweenState2) {
+            this.tweenState2.stop();
+          }
+        }
+
+        if (this.isFail) {
+          return;
+        }
+
+        this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
+        return;
+      }
+    }
+
+    if (this.Point_C.getBoundingBox().intersects(this.TrainPoint.getBoundingBox())
+    ) {
+      if (this.isFail) {
+        return;
+      }
+
+      this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
+      return;
+    }
+
+    if (this.TrainPoint.getBoundingBox().intersects(this.checkPoint_1.getBoundingBox()) && this.isCollideBreakPoint) {
+      if (this.isFail) {
+        return;
+      }
+
       this.hanldeCheckCollideGirl(this.initPoint_A_Pos);
       return;
     }

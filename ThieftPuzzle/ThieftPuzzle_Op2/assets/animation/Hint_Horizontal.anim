@@ -1,0 +1,291 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "Hint_Horizontal",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 2.3333333333333335,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "paths": {
+      "hand_": {
+        "props": {
+          "position": [
+            {
+              "frame": 0.16666666666666666,
+              "value": [
+                -81,
+                63,
+                0
+              ]
+            },
+            {
+              "frame": 1.1666666666666667,
+              "value": [
+                -81,
+                -192.244,
+                0
+              ]
+            },
+            {
+              "frame": 2.1666666666666665,
+              "value": [
+                275,
+                -192.244,
+                0
+              ]
+            },
+            {
+              "frame": 2.3333333333333335,
+              "value": [
+                275,
+                -192.244,
+                0
+              ]
+            }
+          ]
+        }
+      },
+      "line_1": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.16666666666666666,
+              "value": 0
+            },
+            {
+              "frame": 0.25,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_2": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.2833333333333333,
+              "value": 0
+            },
+            {
+              "frame": 0.36666666666666664,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_3": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.43333333333333335,
+              "value": 0
+            },
+            {
+              "frame": 0.5166666666666667,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_4": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.5833333333333334,
+              "value": 0
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_5": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.7333333333333333,
+              "value": 0
+            },
+            {
+              "frame": 0.8166666666666667,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_6": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 0.9,
+              "value": 0
+            },
+            {
+              "frame": 0.9833333333333333,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_7": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.05,
+              "value": 0
+            },
+            {
+              "frame": 1.1333333333333333,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_8": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.1666666666666667,
+              "value": 0
+            },
+            {
+              "frame": 1.25,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_9": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.25,
+              "value": 0
+            },
+            {
+              "frame": 1.3333333333333333,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_10": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.3666666666666667,
+              "value": 0
+            },
+            {
+              "frame": 1.45,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_11": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.4833333333333334,
+              "value": 0
+            },
+            {
+              "frame": 1.5666666666666667,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_12": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.5833333333333333,
+              "value": 0
+            },
+            {
+              "frame": 1.6666666666666667,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_13": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.6833333333333333,
+              "value": 0
+            },
+            {
+              "frame": 1.7666666666666666,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_14": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.8,
+              "value": 0
+            },
+            {
+              "frame": 1.8833333333333333,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_15": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 1.8833333333333333,
+              "value": 0
+            },
+            {
+              "frame": 1.9666666666666666,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_16": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 2,
+              "value": 0
+            },
+            {
+              "frame": 2.0833333333333335,
+              "value": 255
+            }
+          ]
+        }
+      },
+      "line_17": {
+        "props": {
+          "opacity": [
+            {
+              "frame": 2.0833333333333335,
+              "value": 0
+            },
+            {
+              "frame": 2.1666666666666665,
+              "value": 255
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}
